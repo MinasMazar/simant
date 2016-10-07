@@ -15,6 +15,7 @@ module Simant
       attr_accessor :verbose
       def initialize(driver_num)
         @drivers = driver_num.times.map &Proc.new
+        @drivers.each_with_index { |d,i| d.name = "#{i} - #{d.name}" }
       end
       def iterate_til_ants_done
         drivers.map do |d|
@@ -25,8 +26,8 @@ module Simant
           drivers.each do |d|
             d.threaded_loop.join
           end
-          drivers.each_with_index do |d, i|
-            puts "Engine #{i}: Ants done after #{d.iterations} iterations"
+          drivers.sort_by { |d| -d.iterations }.each_with_index do |d, i|
+            puts "Engine #{d.name}: Ants done after #{d.iterations} iterations"
           end
           iterations
         rescue Interrupt

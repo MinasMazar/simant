@@ -12,6 +12,8 @@ class SimantCLI < Thor
         engine.extend Simant::Engines::ThreadedAntEngine
         engine
       end
+      multi_engine.verbose = options[:sims] == 1 && options[:verbose]
+      multi_engine
     end
 
     def select_actor
@@ -31,7 +33,6 @@ class SimantCLI < Thor
   def simulate
     Simant.debug = options[:debug]
     engine = generate_engine
-    engine.verbose = options[:verbose]
     engine.iterate_til_ants_done
   end
 end

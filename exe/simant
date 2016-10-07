@@ -1,0 +1,39 @@
+require "thor"
+require "pry"
+require "simant"
+
+class SimantCLI < Thor
+
+  no_commands do
+
+    def generate_engine
+      multi_engine = Simant::Engines::MultiThreadedAntEngine.new options[:sims] do
+        engine = Simant::Engines::BasicEngine.new options[:world_size], options[:food_places], options[:food_size], options[:ants], select_actor
+        engine.extend Simant::Engines::ThreadedAntEngine
+        engine
+      end
+    end
+
+    def select_actor
+      Module.const_get( "Simant::Actors::" + options[:actor] )
+    end
+
+  end
+  desc "simulate", "start simulation with given parameters"
+  option :world_size, type: :numeric, default: 8, desc: "Size of world (NxN)"
+  option :food_places, type: :numeric, default: 4, desc: "Number of food places"
+  option :food_size, type: :numeric, default: 4, desc: "The seeds size of each food place"
+  option :ants, type: :numeric, default: 2, desc: "Number of ants"
+  option :sims, type: :numeric, default: 1, desc: "The number of concurrent simulations"
+  option :actor, default: "RandomicActor", desc: "Select a specific ant actor implementation (availables are RandomicActor, HistorizedActor)"
+  option :verbose, type: :boolean, default: true, desc: "Should print world each iteration?"
+  option :debug, type: :boolean, default: false, desc: "Should print debug info"
+  def simulate
+    Simant.debug = options[:debug]
+    engine = generate_engine
+    engine.verbose = options[:verbose]
+    engine.iterate_til_ants_done
+  end
+end
+
+SimantCLI.start ARGV

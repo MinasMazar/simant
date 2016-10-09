@@ -1,0 +1,21 @@
+%script{ :src => "https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" }
+
+:javascript
+  $(document).ready( function() {
+    $.ajax({
+      url: "/iteration",
+      success: function(data) {
+        $("table#world").replaceWith(data);
+      },
+      error: function(data) {
+      }
+    })
+  } )
+
+%h1 Simant
+%div
+  %a{ :href => "/prev" }Previous Iteration
+  %table#world
+  %a{ :href => "/prev" }Next Iteration
+%footer
+  Bye
